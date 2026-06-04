@@ -1,11 +1,8 @@
-
-
 from django.urls import path
-from recipes.views import contato, sobre, home
 
-# domain/recipes/contato
+from . import views
+
 urlpatterns = [
-    path('contato/', contato,), #contato
-    path('sobre/', sobre), #sobre
-    path('', home), #home
+    path('', views.home),
+    path('recipes/<int:id>/', views.recipe),
 ]
