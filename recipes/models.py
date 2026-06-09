@@ -1,15 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
-
 class Category(models.Model):
-
     name = models.CharField(max_length=65)
     slug = models.SlugField(max_length=65)
-    
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f'/category/{self.slug}/'
+
     
 class Author(models.Model):
     name = models.CharField(max_length=65)
@@ -17,13 +18,16 @@ class Author(models.Model):
     
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return f'/author/{self.slug}/'
 
 class Recipe(models.Model):
 
     title = models.CharField(max_length=65)
     description = models.CharField(max_length=165)
     slug = models.SlugField(max_length=65)
-    
+
     cover = models.ImageField(upload_to='recipes/covers/%Y/%m/%d/')
     preparation_time = models.IntegerField()
     preparation_time_unit = models.CharField(max_length=65)
@@ -48,5 +52,16 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
     
+    def is_recent(self):
+        from django.utils import timezone
+        from datetime import timedelta
+
+        if self.creation_date >= timezone.now() - timedelta(days=7):
+            return True
+        return False
     
+    def get_preparation_steps_as_list(self):
+        return self.preparation_steps.splitlines()
     
+    def get_absolute_url(self):
+        return f'/recipes/{self.slug}/'
